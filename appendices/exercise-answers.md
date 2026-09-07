@@ -20,6 +20,10 @@
 | 07 View、ViewFamily 与一帧的发起 | [第 07 章答案](answers/07-views-frame-entry.md) |
 | 08 游戏线程、渲染线程、RHI 线程与 GPU | [第 08 章答案](answers/08-threads-and-gpu.md) |
 | 09 RDG 的构图、依赖、资源生命周期与执行 | [第 09 章答案](answers/09-rdg.md) |
+| 10 RHI、D3D12、命令提交与同步 | [第 10 章答案](answers/10-rhi-d3d12.md) |
+| 11 场景更新、GPU Scene 与可见性 | [第 11 章答案](answers/11-scene-visibility.md) |
+| 12 Mesh Batch、Mesh Draw Command 与绘制组织 | [第 12 章答案](answers/12-mesh-draw-commands.md) |
+| 13 深度预通道、HZB 与遮挡 | [第 13 章答案](answers/13-depth-prepass-hzb.md) |
 
 <a id="overview"></a>
 

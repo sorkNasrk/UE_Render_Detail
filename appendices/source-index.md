@@ -19,6 +19,10 @@
 | 07 | GameViewport／LocalPlayer → ViewFamily → FSceneRenderBuilder | [一帧请求的发起](../chapters/07-views-frame-entry.md) |
 | 08 | 渲染命令管道 → RHI 记录、翻译、提交 → 分层同步 | [线程与 GPU 协作](../chapters/08-threads-and-gpu.md) |
 | 09 | Pass 参数 → 依赖／寿命分析 → 回调命令与历史提取 | [RDG 与真实 TAA 节点](../chapters/09-rdg.md) |
+| 10 | RHI 命令 → D3D12 Context／状态 → Payload／Queue → 同步与呈现 | [后端命令与设备执行](../chapters/10-rhi-d3d12.md) |
+| 11 | FScene.Update → GPU Scene 脏记录／上传 → CPU 可见性／GPU 实例筛选 | [数据更新与候选集合](../chapters/11-scene-visibility.md) |
+| 12 | MeshBatch → Pass Processor → 缓存／可见 MDC → 实例参数／RHI 提交 | [绘制命令的组织](../chapters/12-mesh-draw-commands.md) |
+| 13 | 深度政策 → Depth Pass Shader → HZB 归约 → 查询与历史消费 | [预通道、深度层级与遮挡](../chapters/13-depth-prepass-hzb.md) |
 
 ## 先学会怎样使用索引
 

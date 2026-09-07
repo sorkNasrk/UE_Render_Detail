@@ -75,7 +75,22 @@ SM6 是 Shader Model 6，即 Shader 编译与执行所依据的一组能力要�
 - [RenderUtils.cpp：Nanite 项目开关](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/RenderCore/Private/RenderUtils.cpp:29)，[UseNanite 的合并判断](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/RenderCore/Private/RenderUtils.cpp:1414)，[StaticMeshSceneProxy.cpp：运行时开关与回调](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Engine/Private/StaticMeshSceneProxy.cpp:108)。
 - [VirtualShadowMapArray.cpp：VSM 开关与回调](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/VirtualShadowMaps/VirtualShadowMapArray.cpp:84)，[SceneView.cpp：抗锯齿枚举说明](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Engine/Private/SceneView.cpp:219)。
 
-### A.3.1 MegaLights 为什么单独关闭
+### A.3.1 从第 13 章开始固定深度观察条件
+
+配置 A 补充以下选择，便于沿一条明确的完整深度主线读到 Base Pass。它们是教材的观察选择，不能替代项目运行值。第 13 章同时解释其他模式及其执行条件。
+
+| Rendering 下的设置 | 教学值 | 生效与限制 |
+|---|---|---|
+| Misc Lighting > DBuffer Decals | 开启，`r.DBuffer=1`；先不添加贴花 | 项目设置要求重启；等待 Shader 编译。适用 DBuffer 支持本身就可强制完整预通道 |
+| Optimizations > Early Z-pass | 使用默认政策，`r.EarlyZPass=3` | CVar 帮助明确不能运行时修改。保存项目后统一重启；功能条件可覆盖这一请求 |
+| Optimizations > Mask material only in early Z-pass | 关闭，`r.EarlyZPassOnlyMaterialMasking=0` | 重启型设置，影响相关材质 Shader；不要把只读变量当热切换开关 |
+| Optimizations > Velocity Pass | Write during base pass，`r.VelocityOutputPass=1` | 重启型设置并等待 Shader 编译；避免先进入“深度与速度一起补齐”的另一条早期路径 |
+
+**[源码已确认]**设置映射和重启说明见 [RendererSettings.h](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Engine/Classes/Engine/RendererSettings.h:886)。`r.EarlyZPass` 的帮助和政策值见 [RendererScene.cpp](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/RendererScene.cpp:137)。完整深度的合并条件、`DepthPassCanOutputVelocity`、Base Pass 深度访问与比较函数的区别，见 [第 13 章](../chapters/13-depth-prepass-hzb.md)。
+
+观察会话还应查询 `r.HZBOcclusion`、`r.AllowOcclusionQueries`、`r.SceneDepthHZBAsyncCompute`。不在本附录强制把它们全部设为 1：CPU primitive 遮挡、GPU 实例筛选、HZB 构建与消费者的条件不同。SSR 已经可以要求 HZB，不能用 `r.HZBOcclusion=0` 推出不存在 HZB。没有实际抓帧时，不将这些条件检查标为运行验证。
+
+### A.3.2 MegaLights 为什么单独关闭
 
 `r.MegaLights.EnableForProject` 是项目默认请求，后处理可以覆盖；`r.MegaLights.Allowed` 是许可门槛。为保证基础直接光照主线不会被这条路径替换，A、B 都将前者设为 `0`，并在观察会话将后者设为 `0`。本地源码使用的名称不是 `r.MegaLights.Enable`。
 

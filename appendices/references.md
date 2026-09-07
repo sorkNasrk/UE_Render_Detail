@@ -26,7 +26,7 @@
 - 可支持的解释：`FPrimitiveSceneProxy` 向渲染器提供 `FMeshBatch`；Mesh Pass Processor 将其整理为某个 Pass 的 `FMeshDrawCommand`；绘制描述再转换为 RHI 命令；静态缓存和动态提交具有不同生命周期。
 - 阅读提示：把这篇当作“一个网格的绘制描述如何走到 RHI”的路线图。它不是 Nanite 软件光栅化的完整流程，也不能用旧示例中的函数或“一次缓存”的表述替代当前代理失效、重建和特殊 Pass 的实际条件。
 
-对应本批源码入口：[SRC-PRIMITIVE](source-index.md#src-primitive)。完整绘制命令链将在第 12 章核对。
+对应源码入口：[SRC-PRIMITIVE](source-index.md#src-primitive)。已完成的[第 12 章](../chapters/12-mesh-draw-commands.md) 核对普通网格的绘制命令链，并区分缓存、实例参数生成与提交。
 
 ### DOC-THREADS
 

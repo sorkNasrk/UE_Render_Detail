@@ -170,6 +170,31 @@
 | 图编译 | Graph Compilation | 分析渲染任务与资源关系，不是 HLSL 的 Shader 编译 |
 | 线程组 | Thread Group | 计算 Shader 的一组设备调用；组数与每组线程数要分开 |
 
+## 设备执行、可见性与深度
+
+以下词汇对应第 10～13 章，具体源码条件以正文为准。
+
+| 中文／标识 | 英文 | 用途与区别 |
+|---|---|---|
+| 根签名 | Root Signature | D3D12 约定 Shader 参数如何从根参数与描述符访问，不等于资源内容 |
+| 描述符 | Descriptor | 描述一种资源访问视图；描述符、资源对象和底层内存分属不同层次 |
+| 命令分配器 | Command Allocator | 管理原生命令记录所用存储，设备仍使用时不能任意重置 |
+| 增强屏障 | Enhanced Barriers | D3D12 的同步／访问／布局描述方式；是否启用须看当前 RHI |
+| GPU 场景数据 | GPU Scene | 供 Shader 索引的 primitive／instance 等记录，不是一张已渲染场景图 |
+| 散布上传 | Scatter Upload | 按目的索引把准备好的记录写到目标缓冲的相应位置 |
+| 相关性 | Relevance | 对象与某个 View 和 Pass 的关系，候选可见不保证所有 Pass 都参与 |
+| 保守筛选 | Conservative Culling | 证据不足以排除时保留；基于历史的预测仍有有效性边界 |
+| 绘制命令缓存 | Cached Mesh Draw Commands | 复用适用 Pass 的 Shader、状态与绑定描述，不缓存最终像素 |
+| 可见命令包装 | Visible Mesh Draw Command | 给通用 MDC 附加本视图的实例、排序等信息 |
+| 动态实例化 | Dynamic Instancing | 将适合共享状态的绘制工作压紧；不是改变组件 Mobility |
+| 间接绘制参数 | Indirect Draw Arguments | 由缓冲提供绘制计数等参数，适用时可由 GPU 筛选产生 |
+| 深度预通道 | Depth Prepass | 先绘制适用几何产生深度，有绘制和带宽成本 |
+| 提前深度测试 | Early-Z | 在语义允许时提前拒绝样本；不等于对象遮挡剔除 |
+| 遮挡者／被测对象 | Occluder / Occludee | 提供遮挡的几何／当前正在判断是否被挡住的候选 |
+| 最远／最近 HZB | Furthest / Closest HZB | 本书反向 Z 下分别以 min／max 归约，不是颜色平均 Mip |
+| 像素深度偏移 | Pixel Depth Offset, PDO | 材质对输出深度的适用修改，影响深度 Shader 与一致性条件 |
+| 硬件遮挡查询 | Hardware Occlusion Query | 汇报适用绘制通过测试的样本相关结果；回读可能有等待 |
+
 ## UE5 功能名称
 
 以下是功能定位，具体算法和启用条件会在第 21～25 章核对展开。

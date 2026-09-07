@@ -59,3 +59,15 @@ P 与 Q 的定义来自 [第一章](../chapters/01-from-scene-to-pixel.md)：P �
 [第 05 章](../chapters/05-resources-color-history.md) 将本表展开为可计算的例子：RGBA16F 数据量、纹理过滤、视口 UV 到缓冲 UV、sRGB 编解码、预曝光尺度以及 TAA 历史登记和提取。它补齐“资源存在”到“读到正确数据”之间的条件，但仍不把这些理论估算当作运行内存或带宽测量。
 
 [第 09 章](../chapters/09-rdg.md) 继续解释这些资源如何成为图中的生产消费关系：参数访问声明、RAW／WAR／WAW、无用 Pass 裁剪、使用区间、瞬态复用和图外历史。其真实 TAA 路线把资源声明与计算调度连接起来，明确图对象、RHI 对象和 GPU 使用具有不同寿命。
+
+## 场景记录与深度的进一步解释
+
+| 资源／记录 | 生产与消费 | 章节与边界 |
+|---|---|---|
+| GPU primitive／instance 数据 | 场景脏更新 → 上传准备 → 散布写入 → Shader 索引读取 | [第 11 章](../chapters/11-scene-visibility.md)；只更新脏记录与全量调试上传不同 |
+| 实例 ID 与间接计数 | CPU 绘制组织提供描述 → 适用 GPU 实例筛选写入 → Draw 消费 | [第 12 章](../chapters/12-mesh-draw-commands.md)；筛掉一次绘制不等于删除 GPU Scene 记录 |
+| 主深度 | Depth Shader 写入 → 适用 Base Pass 深度访问与 HZB | [第 13 章](../chapters/13-depth-prepass-hzb.md)；完整预通道不使所有 Base Pass 一律 Equal |
+| 当前／历史 HZB | 当前深度归约 → 当前消费者；条件提取 → 后续适用消费者 | HZB 可因 SSR 等需求生成，提取不是 CPU 读回 |
+| HZB 测试结果纹理 | 包围体中心与范围上传 → GPU 每项测试 → Readback → CPU 历史消费 | 结果纹理的像素代表一项测试，不代表同坐标的主视图像素 |
+
+[第 10 章](../chapters/10-rhi-d3d12.md) 解释这些图内访问如何继续成为 D3D12 的原生命令、描述符、资源屏障和队列同步。资源可被 Shader 访问、命令已经提交、CPU 可读回和屏幕已经显示是不同条件。
