@@ -32,6 +32,10 @@
 | 19 速度缓冲、TAA 与 TSR | [第 19 章答案](answers/19-velocity-taa-tsr.md) |
 | 20 后处理、曝光、色调映射、UI 与呈现 | [第 20 章答案](answers/20-postprocess-present.md) |
 | 21 Substrate | [第 21 章答案](answers/21-substrate.md) |
+| 22 Nanite | [第 22 章答案](answers/22-nanite.md) |
+| 23 虚拟阴影贴图 | [第 23 章答案](answers/23-virtual-shadow-maps.md) |
+| 24 Lumen 软件追踪 | [第 24 章答案](answers/24-lumen-software-tracing.md) |
+| 25 硬件光线追踪及相关分支 | [第 25 章答案](answers/25-hardware-ray-tracing.md) |
 
 <a id="overview"></a>
 

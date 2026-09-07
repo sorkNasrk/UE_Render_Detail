@@ -77,7 +77,24 @@
 
 核对过程中尝试了 `rendering-overview-for-unreal-engine` 与 `unreal-engine-rendering-overview` 两个概览候选路径。它们虽然返回 HTTP 200，但当前响应只有导航壳，缺少可确认的标题和正文。因此不将这两个候选地址作为已核验参考资料，也不从空白响应推断“渲染概览支持某个说法”。本书的一帧总览依据上列具体文档和本地源码组合建立。
 
-本批尚未执行编辑器观察练习，也未读取全部关联文档。将来的 Nanite、Lumen、VSM、硬件光线追踪和精确后处理章节会增加各自经正文核验的参考资料，不能把这些功能在目录中出现当作其实现已经全部查证。
+本书尚未执行编辑器观察练习，也未读取全部关联官方文档。第 18～25 章主要依据下面列出的本地实现完成，没有把未打开的网络页面列为已核实资料，也没有以静态代码阅读替代运行证据。
+
+## 后续章节的源码依据
+
+版本统一为本机 UE 5.7.4、CL 51494982，核对日期为 2026-09-07。以下目录相对 `Engine` 根目录，实际文件、符号与行号链接保留在对应章节中。表格说明已阅读的实现范围，并不声称审计过整份引擎。
+
+| 章节 | 主要源码区域 | 核验重点 |
+|---|---|---|
+| [18 透明与环境](../chapters/18-translucency-sky-fog-volume.md) | `Renderer/Private/TranslucentRendering.cpp`、天空／雾相关 C++ 与 `Shaders/Private` 对应 Shader | 普通与 Separate 透明表示、天空条件、体积散射历史和最终积分 |
+| [19 时间重建](../chapters/19-velocity-taa-tsr.md) | `Renderer/Private/PostProcess/TemporalAA.cpp`、`TemporalSuperResolution.cpp`、速度写入与对应 Shader | 相机速度恢复、TAA 限制历史、TSR 阶段／条件／提取 |
+| [20 后处理与显示](../chapters/20-postprocess-present.md) | `Renderer/Private/PostProcess`、`SlateRHIRenderer`、`D3D12RHI/Private` | 手动／自动预曝光区别、内部 LUT、场景／窗口输出和 DXGI Present |
+| [21 Substrate](../chapters/21-substrate.md) | 材质表达／HLSL 翻译器、`Renderer/Private/Substrate` 与对应 Shader | 表达编译、预算简化、Blendable 与 Adaptive、Tile 分类 |
+| [22 Nanite](../chapters/22-nanite.md) | `Developer/NaniteBuilder`、Engine 流送、`Renderer/Private/Nanite` 与对应 Shader | 层级／页面、两阶段遮挡、VisBuffer、深度导出及本版材质 CS |
+| [23 VSM](../chapters/23-virtual-shadow-maps.md) | `Renderer/Private/VirtualShadowMaps`、ShadowSceneRenderer 与对应 Shader | 页寻址／分配、静动态缓存、Receiver Mask、SMRT 与 One Pass 回退 |
+| [24 Lumen 软件](../chapters/24-lumen-software-tracing.md) | `Renderer/Private/Lumen`、`Shaders/Private/Lumen` | 卡片、距离场、场景光照、Radiosity、探针／缓存、反射与合成 |
+| [25 HWRT 与 MegaLights](../chapters/25-hardware-ray-tracing.md) | `Renderer/Private/RayTracing`、Lumen HWRT、MegaLights、D3D12RayTracing | 实例／加速结构、Inline／RayGen、命中光照模式与随机直接光照 |
+
+上表的模块路径在 `Source/Runtime` 或 `Source/Developer` 下展开；Shader 路径单独位于 `Engine/Shaders`。全文真实源码只作定位和必要机制解释，不随仓库分发引擎源码。源码声明与帮助文字发生差异时，章节明确记录已看到的分支及未验证范围，例如本版 MegaLights 的可选方向光／软件路径。
 
 ## 建议的阅读顺序
 

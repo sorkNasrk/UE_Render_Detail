@@ -31,6 +31,10 @@
 | 19 | 速度写入与相机恢复 → Gen4 TAA；TSR 速度膨胀、拒绝、重建与历史提取 | [时间抗锯与重建](../chapters/19-velocity-taa-tsr.md) |
 | 20 | 曝光／PreExposure → 后处理与 LUT／Tonemap → Slate → D3D12／DXGI Present | [从场景颜色到屏幕请求](../chapters/20-postprocess-present.md) |
 | 21 | 材质拓扑编译与简化 → Blendable 导出／重建 → Tile 分类；Adaptive 容器对照 | [Substrate 的表达与运行表示](../chapters/21-substrate.md) |
+| 22 | Cluster 构建／流送 → GPU 剔除／混合光栅 → VisBuffer → 深度导出 → 材质 CS | [Nanite 几何到材质](../chapters/22-nanite.md) |
+| 23 | 接收者页请求 → 页表／池／缓存更新 → 阴影光栅 → SMRT／One Pass 与回退 | [VSM 地址、缓存与阴影](../chapters/23-virtual-shadow-maps.md) |
+| 24 | 卡片捕获／光照 → Radiosity／世界缓存 → Screen Probe／Reflection → 合成 | [Lumen 软件追踪](../chapters/24-lumen-software-tracing.md) |
+| 25 | 实例收集 → BLAS／TLAS → Inline／RayGen → 缓存或命中光照；MegaLights 样本链 | [硬件求交及功能消费者](../chapters/25-hardware-ray-tracing.md) |
 
 ## 先学会怎样使用索引
 

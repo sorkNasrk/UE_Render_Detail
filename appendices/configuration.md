@@ -332,7 +332,57 @@ Substrate 和项目 GBuffer 格式都应通过项目配置准备、重启并等 
 
 第 20 章的曝光、Bloom、DOF 和运动模糊观察继续采用 A.4 基线，并从关卡／PPV 副本逐项恢复功能；手动曝光时不能强行套用自动模式“取前帧曝光”的路径。没有用户外部颜色 LUT 也不能要求捕获中没有内部 LUT 生成，见 [第 20 章](../chapters/20-postprocess-present.md)。
 
-## A.8 本附录的验证范围
+## A.8 第 22～25 章的表示与光追对照
+
+### A.8.1 Nanite 与 VSM
+
+Nanite 项目支持、每资产 Build Nanite 和运行时 `r.Nanite` 是三层条件。先准备项目并按要求重启，再为副本资产构建数据；运行开关不能生成缺失的派生数据。第 22 章先做 A 的 Nanite 单项对照，再回完整 B。主视图深度 Compute 导出还要求 Depth UAV 和 Explicit HTile 等设备能力，不应在实验记录中仅凭 D3D12 或 SM6 就填“已开启”。
+
+VSM 沿用 B 的 `r.Shadow.Virtual.Enable=1` 和 Nanite 项目支持，保持 `r.Shadow.Virtual.NonNaniteVSM` 有效以研究适用普通网格。以下用于查询或单项会话对照，不表示必须把所有参数重写成注册值：
+
+| 观察项 | 变量／本版信息 | 条件与准备 |
+|---|---|---|
+| 请求方式 | `r.Shadow.Virtual.MarkPixelPages`；`r.Shadow.Virtual.MarkPagesUsingFroxels` | Froxel 分支还需有效 Froxel 数据；它不是体积雾纹理 |
+| 页池 | `r.Shadow.Virtual.MaxPhysicalPages` 注册 2048 | 实际容量可按池行宽取整；重分配丢失缓存，稳定后再记录 |
+| 方向接收者掩码 | `r.Shadow.Virtual.UseReceiverMaskDirectional` 注册 true | 会改变动态缓存完整性与失效策略；切换后等待旧缓存更新 |
+| 软阴影射线 | `r.Shadow.Virtual.SMRT.RayCountLocal`／`RayCountDirectional` | 0 是不用 SMRT，仍可查询 VSM；按 0、3、7 单项观察 |
+| 每射线采样 | `r.Shadow.Virtual.SMRT.SamplesPerRayLocal`／`SamplesPerRayDirectional` | 固定 Source Radius／Angle 和 ray count 后比较，不能机械计算纹理读取数 |
+| 局部光投影 | `r.Shadow.Virtual.OnePassProjection`；`r.Shadow.Virtual.OnePassProjection.MaxLightsPerPixel` | 可视化会改变 One Pass 条件；回普通 Lit 再计时；超预算有单样本回退 |
+| 方向分辨率偏置 | `r.Shadow.Virtual.ResolutionLodBiasDirectional` | 向正方向增加 bias 降低密度，先记录原值再小步对照 |
+
+具体注册位置、缓存规则、观察通道与恢复步骤见 [第 23 章](../chapters/23-virtual-shadow-maps.md)。这些运行调试不要求每次重启项目，但设备／项目功能支持要提前准备；重新分配、缓存失效和材质构建的过渡不能算作稳定性能。修改资产时保存独立副本，不覆盖引擎基础网格。
+
+### A.8.2 Lumen 软件追踪
+
+B 先按 Detail Tracing 准备，查询 `r.Lumen.TraceMeshSDFs=1` 与 `r.Lumen.TraceMeshSDFs.Allow=1`，保持项目和 Lumen 硬件光追均为 0。Generate Mesh Distance Fields 是重启型设置，生成距离场／Cards 属于资产派生数据准备，不能全部称为 Shader 编译。
+
+| 观察项 | 单项修改 | 观察前提 |
+|---|---|---|
+| 探针屏幕信息 | `r.Lumen.ScreenProbeGather.ScreenTraces` 对照 0／1 | 保持反射 ScreenTraces 不变，观察地面间接贡献与接触区域 |
+| 反射屏幕信息 | `r.Lumen.Reflections.ScreenTraces` 对照 0／1 | 保持探针 ScreenTraces 不变，观察金属球 |
+| 细节距离场 | `r.Lumen.TraceMeshSDFs` 对照 1／0 | 项目距离场已准备；Allow 和显示标志仍需允许 |
+| 卡片布局 | `r.Lumen.Visualize.CardPlacement 1`，结束恢复 0 | 配合 Lumen Scene／Surface Cache 查看表示，不以调试模式计正常帧时间 |
+| 卡片生成预算 | 资产 Build Settings 的 Max Lumen Mesh Cards | 改后 Apply 并等待构建；12 是构造初值预算，不保证生成恰好 12 张 |
+| 更新响应 | PPV 的 Lumen Scene Lighting Update Speed、Final Gather Lighting Update Speed | 一次只改一项，它们不是 TAA 的时间权重 |
+
+会话屏幕／细节追踪对照无需为每次值变化重启，但必须先具备资产与 Shader 支持。项目／PPV 方法覆盖应明确记录；第 24 章实践会在唯一 PPV 中显式覆盖为 Lumen，与本附录初始“继承项目”的选择结果一致，但配置记录仍要注明这个覆盖来源。来源和预期排查见 [第 24 章](../chapters/24-lumen-software-tracing.md)。
+
+### A.8.3 HWRT 与 MegaLights 独立副本
+
+第 25 章在 B 的副本准备硬件对照，原 B 保持软件追踪。项目 Support Hardware Ray Tracing 对应 `r.RayTracing=1`，需要 Support Compute Skin Cache、支持能力的 GPU／驱动、D3D12 和适用平台模式。项目支持、平台编译选择与 Generate Ray Tracing Proxies 变更应重启并等待 Shader／资产准备，不能用会话值强行替代。
+
+准备后按顺序执行：
+
+1. 仅为 Lumen 开 `r.Lumen.HardwareRayTracing=1`，`r.Lumen.HardwareRayTracing.LightingMode=0`；两灯普通光追阴影保持禁用，MegaLights 关闭，距离场保留。功能开关改变会触发适用渲染状态重建，稳定后再比较。
+2. 仅把 LightingMode 改为 2，比较反射 Hit Lighting；本版 1 才是 GI 与反射的适用 Hit Lighting。最终 PPV 可覆盖，RayGen 能力不足时不能仅靠数值宣称执行。
+3. 恢复光照模式，仅把点光 Cast Ray Traced Shadow 设为 Enabled，方向光保持 VSM。全局 `r.RayTracing.Shadows=0` 不会覆盖单灯显式 Enabled，实验结束恢复灯设置。
+4. 在另一项对照中启用 MegaLights，检查项目／PPV、`r.MegaLights.Allowed=1`、单灯 Allow 与 Shadow Method。保持 `r.MegaLights.HardwareRayTracing=1`、`r.MegaLights.SoftwareRayTracing.Allow=0`、`r.MegaLights.DirectionalLights=0`，只让点光参与；记录样本数、下采样和材质测试模式。初始阴影方法 Ray Tracing，随后单项对照 VSM。
+
+两种 Lumen LightingMode、普通光追阴影和 MegaLights 是独立轴。Nanite 几何也要记录当前 `r.RayTracing.Nanite.Mode` 及实际 Proxy／LOD，不能假设 Mode 0 一定是固定传统 LOD0。为避免术语混用，此处所说 Proxy 是光追几何表示，区别于 CPU 的 SceneProxy 对象。
+
+MegaLights 项目提示与本版源码有版本差异：默认关闭的方向光和软件分支已经存在，但本书未验证它们的运行支持；教学实验仍使用硬件点光路线。只选择 VSM 作为某灯的阴影方法，不等于可以忽略整个功能的外层平台／追踪数据条件。完整依据见 [第 25 章](../chapters/25-hardware-ray-tracing.md)。
+
+## A.9 本附录的验证范围
 
 本批已核对本地版本、设置声明、枚举数值、关键变量注册、部分启用条件以及曝光计算。尚未执行项目创建、UI 操作、Shader 编译、距离场／Nanite 构建、Standalone 运行、截图与 GPU 捕获；因此所有观察现象均为待实践验证的预期，没有“运行观察已验证”的项目。
 

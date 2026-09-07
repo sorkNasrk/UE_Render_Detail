@@ -101,3 +101,19 @@ P 与 Q 的定义来自 [第一章](../chapters/01-from-scene-to-pixel.md)：P �
 | Adaptive Substrate.Material | 平台及预算确认 → 条件分配数组 → Header／Closure 打包 → 适用消费者 | 仅作独立格式对照；Blendable B 不创建这一 Adaptive 数组 |
 
 跨帧历史保留是资源引用与同步问题，不是把 GPU 纹理转成 CPU 数组。颜色表示也必须沿链路追踪：SceneColor 的预曝光值、透明透射率、LUT 输入和显示编码不能因都使用 RGB／RGBA 就直接互换。
+
+## 现代功能的几何与缓存
+
+| 资源 | 生产与消费 | 章节与边界 |
+|---|---|---|
+| Nanite 页面与层级 | 构建期编码 → 根页与流送请求 → 安装／转码 → GPU 层级选择 | [第 22 章](../chapters/22-nanite.md)；请求不等于本帧立即驻留 |
+| Nanite VisBuffer | Main／适用 Post 光栅竞争 → 深度与遮罩导出 → 材质分桶重建输入 | 材质 CS 与条件 Compute 深度导出分开，辅助 lane 不都写结果 |
+| VSM 请求／页表／物理池 | 接收者需求 → 复用／分配／失效 → 清页与阴影光栅 → 虚拟查询 | [第 23 章](../chapters/23-virtual-shadow-maps.md)；普通网格也可向物理 UAV 写反向 Z |
+| VSM 静态／动态层 | 缓存分类与更新 → 适用分离深度 → max 合并 → 投影消费 | Receiver Mask 可让动态部分 uncached，静止不保证所有页全缓存 |
+| One Pass mask bits | 局部灯一起投影／打包 → 每灯查找 → 超预算单样本回退 | 不替代每灯虚拟深度生成，也不等同 clustered deferred |
+| Lumen SDF 与卡片 | 几何资产构建 → 距离场／卡片维护 → 软件求交 → 卡片光照采样 | [第 24 章](../chapters/24-lumen-software-tracing.md)；求交与得到出射亮度分开 |
+| Lumen Final Lighting | 卡片直接／间接辐照度与 Albedo／Emissive → 组合 → 持久光照反馈 | 更新预算不是固定每 N 帧更新所有页 |
+| Screen Probe／Radiance Cache | 当前需求和历史 → 方向追踪／滤波 → 积分与像素合成 | 空间探针、表面缓存和屏幕像素历史各有独立表示 |
+| BLAS／TLAS | 实例收集、适用几何更新 → 结构构建 → 光线 Shader 遍历 | [第 25 章](../chapters/25-hardware-ray-tracing.md)；按层／视图组织，存在维护成本 |
+| Lumen HWRT TraceRadiance | 屏幕后待处理项 → 硬件求交 → 缓存／命中光照 → 反射重建 | 切换几何查询不自动省略 Lumen 历史或改用 Path Tracing |
+| MegaLights 样本与历史 | 灯光概率／历史引导 → 阴影查询 → 样本着色 → 时间／空间处理 | 采样可提前影响 VSM 页面请求；光照历史不是主 TAA History |
