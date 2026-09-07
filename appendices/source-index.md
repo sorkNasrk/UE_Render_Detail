@@ -35,6 +35,9 @@
 | 23 | 接收者页请求 → 页表／池／缓存更新 → 阴影光栅 → SMRT／One Pass 与回退 | [VSM 地址、缓存与阴影](../chapters/23-virtual-shadow-maps.md) |
 | 24 | 卡片捕获／光照 → Radiosity／世界缓存 → Screen Probe／Reflection → 合成 | [Lumen 软件追踪](../chapters/24-lumen-software-tracing.md) |
 | 25 | 实例收集 → BLAS／TLAS → Inline／RayGen → 缓存或命中光照；MegaLights 样本链 | [硬件求交及功能消费者](../chapters/25-hardware-ray-tracing.md) |
+| 26 | 主视口 → SceneRenderBuilder → Scene 更新 → 普通基础 Pass → P/Q → TAA／窗口 | [配置 A 的整帧跟读](../chapters/26-basic-frame-walkthrough.md) |
+| 27 | 主深度／VisBuffer／Blendable → VSM／Lumen → 光照汇合 → 透明与显示 | [配置 B 的整帧与数据年龄](../chapters/27-modern-frame-walkthrough.md) |
+| 28 | 可视化／vis → Stats／新 GPU Profiler → Trace → 捕获／DumpGPU → Shader 与依赖 | [观察、计时与源码取证](../chapters/28-debugging-and-profiling.md) |
 
 ## 先学会怎样使用索引
 
@@ -149,7 +152,7 @@ Slate 绘制窗口 -> Slate 的 RDG Execute -> PresentWindow_RenderThread
 | 第 3520、3654 行 `RenderTranslucency` | 透明物体相关工作 | 水上、水下及其他渲染条件存在不同路径 |
 | 第 3943 行 `AddPostProcessingPasses` | 按视图加入后处理 | 后处理使用本帧场景结果，后面仍有窗口呈现流程 |
 
-这些是 C++ 组织工作的位置，并非已经执行完的 GPU 事件。相邻两行之间可能只建立依赖或安排任务。更不能把表格的行序当成适用于 Nanite、Lumen、前向渲染、Scene Capture 和编辑器模式的统一时间线。后续章节会沿教学配置分别展开。
+这些是 C++ 组织工作的位置，并非已经执行完的 GPU 事件。相邻两行之间可能只建立依赖或安排任务。更不能把表格的行序当成适用于 Nanite、Lumen、前向渲染、Scene Capture 和编辑器模式的统一时间线。各章按教学配置分别展开，完整串联见第 26～27 章。
 
 ### SRC-RDG
 
@@ -159,7 +162,7 @@ Slate 绘制窗口 -> Slate 的 RDG Execute -> PresentWindow_RenderThread
 
 随后第 2036 行附近进入执行 Pass 的组织过程，第 2082 行可见 `QueueAsyncCommandListSubmit`。继续到 [FRDGBuilder::ExecutePass，第 3482 行](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/RenderCore/Private/RenderGraphBuilder.cpp:3482)，可以看到第 3490 行执行前置处理、第 3492 行调用 `Pass->Execute(RHICmdListPass)`、第 3494 行执行后置处理。回调拿到的是 RHI 命令列表，不是屏幕像素数组。
 
-这组代码支持将“添加 Pass”“编译依赖并安排资源”“调用 Pass 回调记录命令”“底层提交”“GPU 执行”分开解释。`GraphBuilder.Execute()` 返回不能作为所有 GPU 工作完成或画面已显示的证据；调试 Immediate Mode、任务并行和实际同步路径也需要单独考虑。跨帧资源的提取和历史数据复用将在 RDG 正文章节展开。
+这组代码支持将“添加 Pass”“编译依赖并安排资源”“调用 Pass 回调记录命令”“底层提交”“GPU 执行”分开解释。`GraphBuilder.Execute()` 返回不能作为所有 GPU 工作完成或画面已显示的证据；调试 Immediate Mode、任务并行和实际同步路径也需要单独考虑。跨帧资源的提取和历史数据复用见 [第 09 章](../chapters/09-rdg.md)。
 
 ### SRC-BASEPASS
 

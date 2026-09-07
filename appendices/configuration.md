@@ -382,10 +382,34 @@ B 先按 Detail Tracing 准备，查询 `r.Lumen.TraceMeshSDFs=1` 与 `r.Lumen.T
 
 MegaLights 项目提示与本版源码有版本差异：默认关闭的方向光和软件分支已经存在，但本书未验证它们的运行支持；教学实验仍使用硬件点光路线。只选择 VSM 作为某灯的阴影方法，不等于可以忽略整个功能的外层平台／追踪数据条件。完整依据见 [第 25 章](../chapters/25-hardware-ray-tracing.md)。
 
-## A.9 本附录的验证范围
+## A.9 第 26～27 章的整帧跟读条件
+
+[基础一帧](../chapters/26-basic-frame-walkthrough.md) 和 [现代一帧](../chapters/27-modern-frame-walkthrough.md) 沿用本附录的场景、手动曝光、1280×720 Standalone 和 TAA。为追踪同一次透明交接，另固定以下条件；这些是教材选择，不是所有工程的默认行为。
+
+| 条件 | 本次选择 | 准备与检查 |
+|---|---|---|
+| 蓝片材质透明阶段 | After DOF；Cast Shadow 关闭 | 保存材质并等待编译；不添加折射和自定义后处理材质 |
+| Separate Translucency | `r.SeparateTranslucency=1` | 查询会话值，并查看当前材质与视图是否实际进入独立目标 |
+| 透明分辨率 | `r.SeparateTranslucencyScreenPercentage=100` | 另核对动态缩放条件与实际纹理尺寸，不能只看输出窗口大小 |
+| 普通阴影提前分支 | A 使用 `r.shadow.ShadowMapsRenderEarly=0` | 会话选择；B 的 VSM 不支持这里的提前路线 |
+| 完整深度后的 Base Pass | `r.BasePassWriteDepthEvenWithFullPrepass=0` | 与 DBuffer、Early Z 和 Velocity 项共同核对；改变可能重建渲染状态，稳定后观察 |
+
+上述运行变量不是重新构建 Shader 能力的替代；DBuffer、早期深度和速度模式仍按 A.3.1 的项目准备要求执行。完整预通道使当前路线的 Base Pass 不必重写主深度，但不意味着所有普通方块深度比较都变成 Equal，也不意味着模板禁止写入。
+
+静态依据：[透明比例注册与说明](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/TranslucentRendering.cpp:37)、[提前阴影注册](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/DeferredShadingRenderer.cpp:287)、[VSM 限制](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/DeferredShadingRenderer.cpp:2843)、[Base Pass 深度开关](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/RendererScene.cpp:157)。透明分类与合成条件详见第 18、26 章。
+
+## A.10 第 28 章的工具观察条件
+
+[第 28 章](../chapters/28-debugging-and-profiling.md) 复用 A、B 场景，不为使用工具另改材质、灯光和重建算法。每次记录当前构建、运行模式、实际 RHI、VSync、FPS 上限、动态分辨率、ViewRect、工具附加状态和相关变量原值。
+
+Buffer Visualization、`vis`、`ProfileGPU`、Trace、RenderDoc 和 DumpGPU 用来回答不同问题。各节给出启用条件、具体命令与恢复方法；没有调试功能或事件时先检查构建、通道、过滤和目标进程。Shader 符号、只读调试选项、插件附加等需要准备时，在独立诊断副本中完成相应重启或编译。
+
+普通性能记录保持 RDG ImmediateMode、FlushGPU 等强制诊断模式关闭；运行中查询确认，不把注册初值当实测。退出 `vis`、恢复 Lit、停止本次 Trace／导出并恢复变量后，再测正常负载。ProfileGPU 的忙碌统计、Trace 时间线、捕获回放和导出等待不能混成一个毫秒口径。
+
+## A.11 本附录的验证范围
 
 本批已核对本地版本、设置声明、枚举数值、关键变量注册、部分启用条件以及曝光计算。尚未执行项目创建、UI 操作、Shader 编译、距离场／Nanite 构建、Standalone 运行、截图与 GPU 捕获；因此所有观察现象均为待实践验证的预期，没有“运行观察已验证”的项目。
 
-后续实践章节应附带实际版本、配置记录与捕获证据，再将对应条目标记为运行验证完成。来源中的行号是此次本地 UE 5.7.4 安装源码的定位信息；升级后先搜索符号与变量名，再重新确认条件，不能把旧行号直接当成新版本的证据。
+读者实际执行实践时，应记录版本、配置与捕获证据，再将该次实验对应条目标记为运行验证完成。来源中的行号是此次本地 UE 5.7.4 安装源码的定位信息；升级后先搜索符号与变量名，再重新确认条件，不能把旧行号直接当成新版本的证据。
 
 [返回总目录](../README.md) · [源码索引](source-index.md)

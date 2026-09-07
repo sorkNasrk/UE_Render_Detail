@@ -40,7 +40,7 @@ UE 实际保存的是离散、压缩、有限分辨率的距离近似。`LumenSo
 
 **Mesh Card（网格卡片）**以若干捕获方向和有深度的图像覆盖网格表面，用于给表面建立可采样的参数化。它不是给主视图替换成几张平面。构建期工具 `FMeshUtilities::GenerateCardRepresentationData` 生成卡片数据；静态网格 `FMeshBuildSettings::MaxLumenMeshCards` 构造初值为 12，控制资产构建预算，设为 0 可关闭该网格的卡片生成。12 是最大生成设置，不保证每个资产恰好 12 张。[卡片构建入口](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Developer/MeshUtilities/Private/MeshCardRepresentationUtilities.cpp:1076)[资产设置与默认值](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Engine/Classes/Engine/EngineTypes.h:2791)
 
-**Surface Cache（表面缓存）**不是 SDF。它是把卡片展开到物理图集，保存卡片表面的材质、法线、深度、发光和随时间更新的直接/间接光照。软件追踪在命中 SDF 后，会把命中位置映射回卡片并采样 Radiance；`LumenSoftwareRayTracing.ush` 的 `ConeTraceMeshSDFsAndInterpolateFromCards` 正是在命中后调用 `SurfaceCacheSample.Radiance`。[命中后采样](G:/UnrealEngineInstalled/UE_5.7/Engine/Shaders/Private/Lumen/LumenSoftwareRayTracing.ush:588)
+**Surface Cache（表面缓存）**不是 SDF。它是把卡片展开到物理图集，保存卡片表面的材质、法线、深度、发光和随时间更新的直接/间接光照。软件追踪在命中 SDF 后，会把命中位置映射回卡片并采样 Radiance；`LumenSoftwareRayTracing.ush` 的 `ConeTraceMeshSDFsAndInterpolateFromCards` 正是在命中后读取采样结果的 `SurfaceCacheSample.Radiance` 成员。[命中后采样](G:/UnrealEngineInstalled/UE_5.7/Engine/Shaders/Private/Lumen/LumenSoftwareRayTracing.ush:588)
 
 ### 24.2.3 Screen Probe 与 Radiance Cache：需求与复用
 

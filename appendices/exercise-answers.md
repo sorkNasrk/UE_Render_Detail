@@ -36,6 +36,9 @@
 | 23 虚拟阴影贴图 | [第 23 章答案](answers/23-virtual-shadow-maps.md) |
 | 24 Lumen 软件追踪 | [第 24 章答案](answers/24-lumen-software-tracing.md) |
 | 25 硬件光线追踪及相关分支 | [第 25 章答案](answers/25-hardware-ray-tracing.md) |
+| 26 基础配置的一帧源码追踪 | [第 26 章答案](answers/26-basic-frame-walkthrough.md) |
+| 27 现代配置的一帧及差异对照 | [第 27 章答案](answers/27-modern-frame-walkthrough.md) |
+| 28 缓冲观察、性能分析与源码阅读实践 | [第 28 章答案](answers/28-debugging-and-profiling.md) |
 
 <a id="overview"></a>
 
