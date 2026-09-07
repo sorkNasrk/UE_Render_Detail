@@ -24,6 +24,10 @@
 | 11 场景更新、GPU Scene 与可见性 | [第 11 章答案](answers/11-scene-visibility.md) |
 | 12 Mesh Batch、Mesh Draw Command 与绘制组织 | [第 12 章答案](answers/12-mesh-draw-commands.md) |
 | 13 深度预通道、HZB 与遮挡 | [第 13 章答案](answers/13-depth-prepass-hzb.md) |
+| 14 Base Pass、GBuffer 与贴花 | [第 14 章答案](answers/14-base-pass-gbuffer-decals.md) |
+| 15 阴影生成与使用 | [第 15 章答案](answers/15-shadows.md) |
+| 16 延迟直接光照 | [第 16 章答案](answers/16-direct-lighting.md) |
+| 17 间接光照、环境遮蔽与反射 | [第 17 章答案](answers/17-indirect-ao-reflections.md) |
 
 <a id="overview"></a>
 

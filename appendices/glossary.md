@@ -195,6 +195,27 @@
 | 像素深度偏移 | Pixel Depth Offset, PDO | 材质对输出深度的适用修改，影响深度 Shader 与一致性条件 |
 | 硬件遮挡查询 | Hardware Occlusion Query | 汇报适用绘制通过测试的样本相关结果；回读可能有等待 |
 
+## 表面属性、阴影与光照
+
+以下术语对应第 14～17 章；相同名称的 Alpha、深度或颜色必须结合生产者和消费者解释。
+
+| 中文／标识 | 英文 | 用途与区别 |
+|---|---|---|
+| 多渲染目标 | MRT, Multiple Render Targets | 一次适用绘制绑定多个颜色附件；附件索引由当前布局决定 |
+| 贴花缓冲 | DBuffer | 在适用 Base Pass 前保存贴花属性，供接收方合入材质；不是最终颜色贴纸 |
+| 着色模型标识 | Shading Model ID | 让后续 Shader 选择表面响应分支，不是 Actor ID 或透明度 |
+| 阴影投射者／接收者 | Shadow Caster / Receiver | 遮住光的几何／判断光源可见性的表面；主相机不可见仍可能投影 |
+| 级联阴影贴图 | CSM, Cascaded Shadow Maps | 按主视图距离组织多个方向光投影范围；分割公式须核对版本 |
+| 百分比渐近过滤 | PCF, Percentage-Closer Filtering | 对多次深度比较结果加权，不能替换成先平均深度再比较 |
+| 阴影偏置 | Shadow Bias | 缓解深度与离散采样自遮挡误差，过大可能造成阴影脱离 |
+| 光源体积 | Light Volume | 用球／锥等覆盖局部光可能影响的屏幕范围，不是可见灯具模型 |
+| 光照网格 | Light Grid | 按屏幕区块及适用深度层索引灯光，延迟路径也可能准备或消费 |
+| 直接／间接光照 | Direct / Indirect Lighting | 光源直接到达表面／经过其他表面传播的贡献，与漫反射／镜面分类独立 |
+| 环境遮蔽 | AO, Ambient Occlusion | 近似局部可见性或遮挡信息；实际影响哪部分颜色取决于消费者 |
+| 屏幕空间环境遮蔽 | SSAO, Screen-Space Ambient Occlusion | 从当前深度及适用法线邻域估计 AO，看不到完整离屏几何 |
+| 屏幕空间反射 | SSR, Screen-Space Reflections | 在当前屏幕深度中搜索反射命中，再采样适用颜色来源；颜色可来自历史 |
+| 反射回退 | Reflection Fallback | 对未由当前反射输入覆盖的部分使用适用 Capture／Sky 等来源；配置 A 没有这些环境源 |
+
 ## UE5 功能名称
 
 以下是功能定位，具体算法和启用条件会在第 21～25 章核对展开。

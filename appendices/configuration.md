@@ -98,6 +98,22 @@ MegaLights 使用随机采样组织直接光照，和 Lumen 间接光照并非�
 
 来源：[MegaLights.cpp：两个开关的注册](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/MegaLights/MegaLights.cpp:13)，[IsRequested：后处理与许可门槛](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/MegaLights/MegaLights.cpp:480)。
 
+### A.3.3 第 16～17 章的直接光照与屏幕空间效果
+
+为了固定一条可阅读的分支，第 16 章在 A、B 均保持 `r.UseClusteredDeferredShading_ToBeRemoved=0`。这是本版仍存在且标为待移除的运行开关；不使用旧名称推断未来支持。两盏灯保留 Cast Shadows，Contact Shadow Length 为 0，不使用 Light Function、IES 或非默认 Lighting Channel。具体排序与条件见 [第 16 章](../chapters/16-direct-lighting.md)。
+
+下表只补充 **配置 A** 的第 17 章观察，不覆盖 B 的 Lumen 方法。选择画质档后再应用会话值，并核对最终 View 的后处理设置。
+
+| 项目 | 固定值 | 生效条件与用途 |
+|---|---|---|
+| AO 方法／实现／层数 | `r.AmbientOcclusion.Method=0`、`r.AmbientOcclusion.Compute=0`、`r.AmbientOcclusionLevels=1` | 运行时选择传统 Pixel Shader SSAO，一级全分辨率；不用异步 AO 推断 A 的位置 |
+| PPV Ambient Occlusion | Intensity=1、Radius=100、Radius in WorldSpace 开启、Static Fraction=1 | 启用对应覆盖；世界空间半径按 UE 厘米解释。静态光照关闭仍须查看 AO 合成的实际颜色输入 |
+| SSR 方法／质量 | `r.ReflectionMethod=2`、`r.SSR.Quality=3`；PPV Screen Space，Intensity=100、Quality=100、Max Roughness=0.8 | View 方法、显示标志、质量、历史与材质粗糙度共同约束实际执行 |
+| SSR 实现 | `r.SSR.Compute=0`、`r.SSR.TiledComposite=0`、`r.SSR.Stencil=0` | 固定普通屏幕 Pixel Shader 主线，优化分支单独对照 |
+| SSR 时间处理 | `r.SSR.Temporal=0`、`r.SSR.ExperimentalDenoiser=0` | 配合 TAA 时不额外请求独立 SSR 时间滤波；仍可使用 TAA 颜色历史作为追踪颜色输入 |
+
+这些会话开关不是要求重启的项目编译开关；仍须具备已编译 Shader 和有效资源。PPV 与控制变量的设置方式、源码注册和最终选择位置见 [第 17 章](../chapters/17-indirect-ao-reflections.md)。**[尚未验证]**没有运行教材工程确认实际 Pass 列表或可见差异，预期不能改写成实测结果。
+
 ## A.4 贯穿场景的观察约定
 
 场景搭建与摆放见 [第一章的观察练习](../chapters/01-from-scene-to-pixel.md#1131-准备一个不含额外照明的关卡)。本附录只规定影响解释的环境条件。

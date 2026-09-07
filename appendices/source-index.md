@@ -23,6 +23,10 @@
 | 11 | FScene.Update → GPU Scene 脏记录／上传 → CPU 可见性／GPU 实例筛选 | [数据更新与候选集合](../chapters/11-scene-visibility.md) |
 | 12 | MeshBatch → Pass Processor → 缓存／可见 MDC → 实例参数／RHI 提交 | [绘制命令的组织](../chapters/12-mesh-draw-commands.md) |
 | 13 | 深度政策 → Depth Pass Shader → HZB 归约 → 查询与历史消费 | [预通道、深度层级与遮挡](../chapters/13-depth-prepass-hzb.md) |
+| 14 | Base Pass 附件／Uniform → 生成 GBuffer 编码 → DBuffer 阶段与接收 | [表面属性与贴花](../chapters/14-base-pass-gbuffer-decals.md) |
+| 15 | 光源投影 → 投射者 → 阴影深度 → 屏幕比较／过滤 → 逐灯消费 | [常规阴影与 CSM](../chapters/15-shadows.md) |
+| 16 | 灯光排序 → 每灯 RDG／Uniform → 屏幕位置恢复 → BRDF／衰减／阴影 → 加法写入 | [延迟直接光照](../chapters/16-direct-lighting.md) |
+| 17 | SSAO 生成／合成 → SSR 输入历史与屏幕追踪 → 反射来源／材质响应 | [AO、间接光与反射](../chapters/17-indirect-ao-reflections.md) |
 
 ## 先学会怎样使用索引
 
