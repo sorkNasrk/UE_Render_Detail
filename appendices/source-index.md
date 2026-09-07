@@ -15,6 +15,10 @@
 | 03 | Renderer 深度／混合选择 → RHI 状态描述 → D3D12 状态映射 | [覆盖、深度与混合](../chapters/03-raster-depth-blending.md) |
 | 04 | 材质表达与编译 → Shader 绑定 → 传统材质数据与 BRDF 求值 | [Shader 与光照](../chapters/04-shaders-materials-lighting.md) |
 | 05 | 场景纹理描述 → 颜色表示 → TAA 历史参数、读取与提取 | [资源、颜色与历史](../chapters/05-resources-color-history.md) |
+| 06 | 组件注册／更新／注销 → Proxy／SceneInfo → 场景统一更新 | [游戏侧与渲染表示](../chapters/06-scene-representation.md) |
+| 07 | GameViewport／LocalPlayer → ViewFamily → FSceneRenderBuilder | [一帧请求的发起](../chapters/07-views-frame-entry.md) |
+| 08 | 渲染命令管道 → RHI 记录、翻译、提交 → 分层同步 | [线程与 GPU 协作](../chapters/08-threads-and-gpu.md) |
+| 09 | Pass 参数 → 依赖／寿命分析 → 回调命令与历史提取 | [RDG 与真实 TAA 节点](../chapters/09-rdg.md) |
 
 ## 先学会怎样使用索引
 

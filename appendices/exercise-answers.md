@@ -16,6 +16,10 @@
 | 03 三角形、光栅化、深度测试与混合 | [第 03 章答案](answers/03-raster-depth-blending.md) |
 | 04 Shader、材质与光照基础 | [第 04 章答案](answers/04-shaders-materials-lighting.md) |
 | 05 纹理、缓冲区、颜色空间与历史数据 | [第 05 章答案](answers/05-resources-color-history.md) |
+| 06 Actor、Component 与渲染场景表示 | [第 06 章答案](answers/06-scene-representation.md) |
+| 07 View、ViewFamily 与一帧的发起 | [第 07 章答案](answers/07-views-frame-entry.md) |
+| 08 游戏线程、渲染线程、RHI 线程与 GPU | [第 08 章答案](answers/08-threads-and-gpu.md) |
+| 09 RDG 的构图、依赖、资源生命周期与执行 | [第 09 章答案](answers/09-rdg.md) |
 
 <a id="overview"></a>
 

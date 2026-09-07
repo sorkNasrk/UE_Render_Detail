@@ -529,4 +529,4 @@ Q 的主不透明深度和 GBuffer 对应背景方块，薄片自己的颜色之
 4. 历史存储颜色为 `3`，历史预曝光 `0.03`，当前预曝光 `0.02`，当前颜色为 `2.5`。若历史有效且假定权重为 `0.6`，正确组合结果是多少？
 5. TAA 代码登记外部历史纹理后，为什么还需要保存视图矩形、检查历史有效性并做曝光校正？`QueueTextureExtraction` 是否表示把颜色下载到 CPU？
 
-参考答案见 [第 05 章答案](../appendices/answers/05-resources-color-history.md)。下一章进入引擎架构：Actor 和 Component 怎样把稳定、可更新的数据交给渲染侧，而不是让 GPU 直接读取游戏对象。
+参考答案见 [第 05 章答案](../appendices/answers/05-resources-color-history.md)。[下一章进入引擎架构](06-scene-representation.md)：Actor 和 Component 怎样把稳定、可更新的数据交给渲染侧，而不是让 GPU 直接读取游戏对象。

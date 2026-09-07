@@ -138,6 +138,38 @@
 | 图外资源登记 | Register External Resource | 将由图外生命周期持有的资源纳入当前 RDG 使用，不表示网络资源 |
 | 资源提取 | Resource Extraction | 将图内适用结果交给图外持有，便于后续使用；不等于 CPU 读回 |
 
+## 场景与执行架构
+
+下列术语沿第 06～09 章展开；这里提供查阅入口，详细条件仍看对应正文。
+
+| 中文／标识 | 英文 | 用途与区别 |
+|---|---|---|
+| 场景内部记录 | Scene Info | 保存 primitive 或灯光在渲染场景中的索引、管理关系和缓存，区别于游戏组件 |
+| 注册／注销 | Registration / Unregistration | 接入或退出组件相关世界系统；不等于 UObject 创建或最终销毁 |
+| 脏标记 | Dirty Flag | 表示某类更新待处理，不是消费完成通知 |
+| 包围体 | Bounds | 用简单范围支持空间筛选；不替代精确表面覆盖或深度 |
+| 轴对齐包围盒 | AABB | 用沿坐标轴的范围包住物体，旋转物体可使世界 AABB 变宽 |
+| 动态材质实例 | MID, Material Instance Dynamic | 运行时覆盖材质参数，普通参数更新与替换组件材质不同 |
+| 持久视图状态 | View State | 保留跨次观察所需数据；当前 FSceneView 可以重新构造 |
+| 视图扩展 | View Extension | 在约定阶段参与观察设置或渲染相关工作 |
+| 场景捕获 | Scene Capture | 为特定目标请求额外观察，部分条件下可并入主 Renderer |
+| 命令管道 | Command Pipe | 组织 CPU 渲染命令的调度和重放，不等于 GPU 队列 |
+| 线程局部存储 | TLS, Thread-Local Storage | 保存每条 CPU 线程自己的上下文，不会自动复制所有场景数据 |
+| 记录／翻译／提交 | Recording / Translation / Submission | 保存引擎操作、形成后端工作、交给提交机制；均不等于 GPU 已完成 |
+| 旁路 | Bypass | 跳过适用 RHI 命令记录层，不跳过底层设备命令和异步执行 |
+| 提交载荷 | Submission Payload | 后端用于组织命令列表、等待与信号等的一批工作 |
+| 栅栏 | Fence | 跟踪特定执行边界；必须说明 RenderThread、RHI、GPU 或 Swapchain 等范围 |
+| 读回 | Readback | 将 GPU 结果复制到 CPU 可读取资源，并在完成条件满足后访问 |
+| 吞吐率／延迟 | Throughput / Latency | 稳定单位时间完成量／一份输入到指定结果的时间，不是同一个量 |
+| 关键路径 | Critical Path | 目标完成前必须依次满足的工作与约束链 |
+| 任务裁剪 | Pass Culling | 删除不贡献必要输出的图节点，区别于几何可见性裁剪 |
+| 瞬态资源 | Transient Resource | 按有限使用区间管理的资源；使用范围还须考虑跨队列依赖 |
+| 内存别名复用 | Memory Aliasing | 不冲突的资源使用区间复用底层存储，需要兼容分配与同步 |
+| 子资源 | Subresource | 纹理 Mip、数组层等访问范围，读写冲突需按实际声明判断 |
+| 写后读／读后写／写后写 | RAW / WAR / WAW | 三类访问冲突，分别保护生产结果、未完读取与写入顺序 |
+| 图编译 | Graph Compilation | 分析渲染任务与资源关系，不是 HLSL 的 Shader 编译 |
+| 线程组 | Thread Group | 计算 Shader 的一组设备调用；组数与每组线程数要分开 |
+
 ## UE5 功能名称
 
 以下是功能定位，具体算法和启用条件会在第 21～25 章核对展开。
