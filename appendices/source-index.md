@@ -27,6 +27,10 @@
 | 15 | 光源投影 → 投射者 → 阴影深度 → 屏幕比较／过滤 → 逐灯消费 | [常规阴影与 CSM](../chapters/15-shadows.md) |
 | 16 | 灯光排序 → 每灯 RDG／Uniform → 屏幕位置恢复 → BRDF／衰减／阴影 → 加法写入 | [延迟直接光照](../chapters/16-direct-lighting.md) |
 | 17 | SSAO 生成／合成 → SSR 输入历史与屏幕追踪 → 反射来源／材质响应 | [AO、间接光与反射](../chapters/17-indirect-ao-reflections.md) |
+| 18 | 透明 MDC／混合 → Separate 合成；天空 LUT；高度雾／体积注入、历史与积分 | [透明与环境介质](../chapters/18-translucency-sky-fog-volume.md) |
+| 19 | 速度写入与相机恢复 → Gen4 TAA；TSR 速度膨胀、拒绝、重建与历史提取 | [时间抗锯与重建](../chapters/19-velocity-taa-tsr.md) |
+| 20 | 曝光／PreExposure → 后处理与 LUT／Tonemap → Slate → D3D12／DXGI Present | [从场景颜色到屏幕请求](../chapters/20-postprocess-present.md) |
+| 21 | 材质拓扑编译与简化 → Blendable 导出／重建 → Tile 分类；Adaptive 容器对照 | [Substrate 的表达与运行表示](../chapters/21-substrate.md) |
 
 ## 先学会怎样使用索引
 

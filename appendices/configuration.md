@@ -280,7 +280,59 @@ r.VolumetricFog
 | 同为 720p 却速度和清晰度不同 | 主／次屏幕比例、动态分辨率、窗口客户区域、DPI、AA 方法及画质 | 最终输出像素数不足以唯一确定内部计算量 |
 | 所有变量看起来正确但仍走其他路径 | 进程是否相同、后处理覆盖、平台回退、插件、命令行与配置优先级 | 应以实际路径和资源为最后证据，不能只凭一张设置截图 |
 
-## A.7 本附录的验证范围
+## A.7 第 18～21 章的单项观察补充
+
+以下设置沿用 A／B 的场景、手动曝光和固定分辨率，只在对应练习中增加功能。它们不会把一项局部对照自动变成另一套完整配置。
+
+### A.7.1 透明、天空与雾
+
+| 观察项 | 设置与适用条件 | 恢复与准备 |
+|---|---|---|
+| 透明绘制与合成位置 | 记录材质的 Translucency Pass、Lighting Mode、透明雾选项和 `r.SeparateTranslucency`；AfterDOF 是适用合成位置，绘制可提前进入独立纹理 | 修改材质后等 Shader 准备；不要用 DOF 关闭推断独立透明必然关闭 |
+| 透明分辨率 | 先记录 `r.SeparateTranslucencyScreenPercentage`，单项比较 100 与 50，同时记录动态透明分辨率和实际目标尺寸 | 会话修改后恢复记录值；50% 才是本章最近深度邻居分支的重要比例条件之一 |
+| 普通高度雾 | 关卡副本添加 ExponentialHeightFog，设 `r.Fog 1`；先保持 `r.VolumetricFog 0` | 需要组件、ShowFlag、视图条件；结束移除实验组件并恢复雾开关 |
+| 体积雾 | 在高度雾条件成立后打开组件 Volumetric Fog，设 `r.VolumetricFog 1` | 先查询 GridPixelSize、GridSizeZ 与历史控制；16／64 是注册数值算例，画质档可以覆盖 |
+| 天空大气 | 单独加入 SkyAtmosphere，检查光源 Atmosphere Sun Light、Atmosphere 显示标志与 `r.SkyAtmosphere` | 组件修改与会话开关无需当作项目 Shader 支持热切换；本书尚未验证实际运行准备情况 |
+| Lit 透明光照 | 从 Unlit 蓝片副本切换，并明确 Lighting Mode；查询 `r.TranslucencyLightingVolume` 与 `r.TranslucencyLightingVolume.Dim` | 修改材质等待编译；TLV 与 Volumetric Fog 是独立系统 |
+
+上述运行开关通常不要求重启项目；材质编译、资源重建与历史稳定仍需完成。若研究 OIT 等项目支持项，应另按其只读／Shader 前提配置，本章不把它加入基础排序实验。具体条件与来源见 [第 18 章](../chapters/18-translucency-sky-fog-volume.md)，包括本版 TLV 变量名称变更。
+
+### A.7.2 TAA 与 TSR
+
+速度写入保持项目设置 **Write during base pass**，即 `r.VelocityOutputPass=1`。它属于重启型配置，改变后重新启动并等待 Shader 编译，不在一次性能对比中临时热改。移动不透明物体时同时记录 Mobility、前帧变换与 WPO 的前帧表达式；切镜实验通过实际 View 的 CameraCut 条件判断。
+
+在已准备好的同一配置中，先保持输入／输出 100%，仅将抗锯齿从 TAA 改为 TSR。TSR 阅读子配置为：
+
+| 控制变量 | 本章选择 | 本版注册初值 | 使用边界 |
+|---|---|---|---|
+| `r.TSR.History.ScreenPercentage` | 100 | 100 | 历史比例不是场景输入比例 |
+| `r.TSR.History.UpdateQuality` | 3 | 3 | 画质档或更高优先级设置可能覆盖 |
+| `r.TSR.AsyncCompute` | 0 | 2 | 先读普通 Compute；异步需设备支持和正确依赖 |
+| `r.TSR.Resurrection` | 0 | 0 | 不在初次对照中增加较久历史复用 |
+| `r.TSR.ReprojectionField` | 0 | 0 | 增强重投影表示作为独立对照 |
+| `r.TSR.ThinGeometryDetection` | 0 | 0 | 薄几何启发式作为独立对照 |
+
+这些是运行会话选择，变更历史格式可能触发历史重置或资源重新准备；不是承诺切换瞬间已有稳定图像。待 100% 对照完成后再单独降低输入分辨率。记录 `r.TemporalAA.Quality`、`r.TemporalAASamples`、`r.TemporalAACurrentFrameWeight` 与 `r.TemporalAA.Upsampling`，恢复原值后再进行下一实验，不能把这些 TAA 控制统称为 TSR 参数。
+
+注册依据：[TemporalSuperResolution.cpp:54](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:54)、[74](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:74)、[240](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:240)、[274](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:274)、[283](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:283)、[325](G:/UnrealEngineInstalled/UE_5.7/Engine/Source/Runtime/Renderer/Private/PostProcess/TemporalSuperResolution.cpp:325)。源码步骤、诊断模式和排查见 [第 19 章](../chapters/19-velocity-taa-tsr.md)。
+
+### A.7.3 Substrate 表示与单项比较
+
+B 保持 `r.Substrate=1`、`r.Substrate.ProjectGBufferFormat=0`（Blendable）、`r.DBuffer=1`。为本章阅读另明确：
+
+| 控制项 | 本章值 | 重启／编译和条件 |
+|---|---|---|
+| `r.Substrate.DBufferPass` | 0 | 只读，改变涉及 Shader 编译；本章不采用独立延后应用变体 |
+| `r.Substrate.AsyncClassification` | 0 | 运行时教学选择，注册初值为 1；B 仍有适用材质 Tile 分类 |
+| `r.Substrate.StochasticLighting` | 0 | 只读，维持普通光照路线；不能当成 MegaLights 的同义开关 |
+
+Substrate 和项目 GBuffer 格式都应通过项目配置准备、重启并等 Shader 编译完成。先在 A 的可恢复副本中仅改变材质系统，比较相同方块的参数和响应，再回到完整 B；这样能区分材质表示改变与 Nanite、Lumen、VSM 组合效果。Adaptive 使用独立项目或可恢复快照，并核查平台支持、实际格式、每像素预算和 Closure 限制。不能把保存过的复杂 Substrate 材质靠关闭开关视为无损还原。
+
+来源、预算和分支详见 [第 21 章](../chapters/21-substrate.md)。该章也解释为什么 `UsesSubstrateMaterialBuffer` 的名称不足以证明 Blendable 创建了 Adaptive 的 `Substrate.Material` 数组。
+
+第 20 章的曝光、Bloom、DOF 和运动模糊观察继续采用 A.4 基线，并从关卡／PPV 副本逐项恢复功能；手动曝光时不能强行套用自动模式“取前帧曝光”的路径。没有用户外部颜色 LUT 也不能要求捕获中没有内部 LUT 生成，见 [第 20 章](../chapters/20-postprocess-present.md)。
+
+## A.8 本附录的验证范围
 
 本批已核对本地版本、设置声明、枚举数值、关键变量注册、部分启用条件以及曝光计算。尚未执行项目创建、UI 操作、Shader 编译、距离场／Nanite 构建、Standalone 运行、截图与 GPU 捕获；因此所有观察现象均为待实践验证的预期，没有“运行观察已验证”的项目。
 

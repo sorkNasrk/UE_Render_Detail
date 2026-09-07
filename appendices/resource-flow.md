@@ -85,3 +85,19 @@ P 与 Q 的定义来自 [第一章](../chapters/01-from-scene-to-pixel.md)：P �
 | SSR 颜色输入／结果 | 有效历史或当前颜色 → 当前深度搜索 → 反射贡献／可信权重 → 材质响应与合成 | 使用 TAA 历史颜色不等于额外运行 SSR 时间滤波；SSRHistory 与 TemporalAAHistory 不同 |
 
 以上表中的先后关系是相应读写依赖。CPU 构图顺序、RDG 回调、底层提交和 GPU 执行仍按第 08～10 章区分。
+
+## 透明、历史、显示与 Substrate
+
+| 资源 | 生产与消费 | 章节与边界 |
+|---|---|---|
+| Separate 透明颜色／Alpha | 清 RGB=0、A=1 → 透明层积累贡献 D 与透射率 T → D+T×背景 | [第 18 章](../chapters/18-translucency-sky-fog-volume.md)；合成时不能再次把 D 乘覆盖率 |
+| 体积雾 LightScattering | 体素光照／适用历史混合 → FinalIntegration → 累计散射与透射 | 历史发生在最终积分前；颜色曝光修正不应同样施加给消光 |
+| 原始 Velocity 与相机矩阵 | 适用速度 Pass／Base Pass 写入 → 消费者结合深度恢复相机运动 → 重投影 | [第 19 章](../chapters/19-velocity-taa-tsr.md)；静态表面原始速度清值不保证屏幕位置不动 |
+| TSR Guide／Color／Metadata 历史 | 拒绝和更新阶段产生 → 提取保留 → 下一帧比较与重建 | Guide 不等于高频颜色；输出还可放入 TemporalAAHistory 供 SSR 消费 |
+| 曝光数据／颜色 LUT | 适用手动或统计曝光计算；颜色分级生成 LUT → Tonemap 消费 | [第 20 章](../chapters/20-postprocess-present.md)；无用户 LUT 不等于没有内部 LUT |
+| 场景输出／窗口 Back Buffer | 场景后处理输出 → 适用 Slate 视口元素与 UI → 交换链呈现 | 离屏纹理、窗口缓冲、Present 请求与实际扫描显示有不同生命周期 |
+| Substrate Blendable GBuffer | 材质拓扑求值 → 导出 GBuffer → SubstrateReadGBufferBSDF 重建 | [第 21 章](../chapters/21-substrate.md)；B 的延迟光照不固定读取 Adaptive Material Container |
+| Substrate 材质分类列表 | GBuffer／适用材质信息 → 每 8×8 Tile 分类 → 分类绘制与调度 | 单个主类别不排除辅助列表；B 仍分配、消费适用分类资源 |
+| Adaptive Substrate.Material | 平台及预算确认 → 条件分配数组 → Header／Closure 打包 → 适用消费者 | 仅作独立格式对照；Blendable B 不创建这一 Adaptive 数组 |
+
+跨帧历史保留是资源引用与同步问题，不是把 GPU 纹理转成 CPU 数组。颜色表示也必须沿链路追踪：SceneColor 的预曝光值、透明透射率、LUT 输入和显示编码不能因都使用 RGB／RGBA 就直接互换。

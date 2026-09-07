@@ -28,6 +28,10 @@
 | 15 阴影生成与使用 | [第 15 章答案](answers/15-shadows.md) |
 | 16 延迟直接光照 | [第 16 章答案](answers/16-direct-lighting.md) |
 | 17 间接光照、环境遮蔽与反射 | [第 17 章答案](answers/17-indirect-ao-reflections.md) |
+| 18 透明物体、天空、雾与体积效果 | [第 18 章答案](answers/18-translucency-sky-fog-volume.md) |
+| 19 速度缓冲、TAA 与 TSR | [第 19 章答案](answers/19-velocity-taa-tsr.md) |
+| 20 后处理、曝光、色调映射、UI 与呈现 | [第 20 章答案](answers/20-postprocess-present.md) |
+| 21 Substrate | [第 21 章答案](answers/21-substrate.md) |
 
 <a id="overview"></a>
 

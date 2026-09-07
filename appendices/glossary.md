@@ -216,6 +216,33 @@
 | 屏幕空间反射 | SSR, Screen-Space Reflections | 在当前屏幕深度中搜索反射命中，再采样适用颜色来源；颜色可来自历史 |
 | 反射回退 | Reflection Fallback | 对未由当前反射输入覆盖的部分使用适用 Capture／Sky 等来源；配置 A 没有这些环境源 |
 
+## 透明、时间重建与输出
+
+以下术语在第 18～21 章展开；“颜色”“Alpha”“历史”的具体意义均取决于当前资源约定。
+
+| 中文／标识 | 英文 | 用途与区别 |
+|---|---|---|
+| 非预乘／预乘 Alpha | Straight / Premultiplied Alpha | RGB 是否已包含覆盖权重；混合因子必须与输入约定配套 |
+| 分离透明 | Separate Translucency | 先在独立目标积累透明贡献，再在适用阶段合成；绘制时刻与合成时刻可以不同 |
+| 剩余透射率 | Remaining Transmittance | 本章 Separate 目标 Alpha 的含义；清为 1 后逐层衰减，不等于普通覆盖 Alpha |
+| 视锥体素 | Froxel, Frustum Voxel | 体积雾在相机视锥中划分的三维采样单元，区别于屏幕二维像素 |
+| 散射／消光 | Scattering / Extinction | 介质向观察方向加入光／减少沿路径传输的光，积分共同形成雾 |
+| 透明光照体积 | TLV, Translucency Lighting Volume | 为适用 Lit 透明提供光照近似；不是 Volumetric Fog 的同名资源 |
+| 抖动 | Jitter | 在不同帧偏移采样位置，为时间重建提供不同样本；不是物体运动 |
+| 去遮挡 | Disocclusion | 原被挡住的表面在本帧显露，旧像素可能没有可用历史 |
+| 历史拒绝／限制 | History Rejection / Clamping | 识别或限制不可靠历史，降低拖影；不能创造当前与历史都缺失的真实细节 |
+| 历史引导数据 | History Guide | TSR 比较历史与当前信号的辅助数据，区别于高频颜色历史 |
+| 预曝光 | Pre-Exposure | 内部场景颜色的尺度变换；手动模式的取值与自动模式历史路线不同 |
+| 曝光值 | EV100, Exposure Value at ISO 100 | 用对数表达相机曝光条件；用于曝光计算，不直接等于最终屏幕亮度 |
+| 色调映射 | Tone Mapping | 将场景亮度范围映射到目标显示表示，可能伴随颜色分级和编码 |
+| 查找表 | LUT, Look-Up Table | 预计算映射；没有用户外部 LUT 也可能生成内部颜色分级 LUT |
+| 双向散射分布函数 | BSDF, Bidirectional Scattering Distribution Function | 描述表面反射和透射响应；使用 BSDF 不意味着材质一定透明 |
+| 材质薄层 | Slab | Substrate 的基本散射层表达，携带粗糙度、漫反射、镜面等参数 |
+| 散射闭包 | Closure | 编译后保留的一份散射响应及关联数据；不是材质编辑器的任意一个节点 |
+| 参数混合 | Parameter Blending | 先合并适用参数再求值，成本与多响应求值不同；非线性使二者通常不等价 |
+| 混合式／自适应 GBuffer | Blendable / Adaptive GBuffer | Substrate 的两种运行表示；本书 B 固定为 Blendable，不能套用所有 Adaptive 容器描述 |
+| 材质区块分类 | Material Tile Classification | 根据区域内所需材质复杂度组织后续工作，B 也可以存在这一阶段 |
+
 ## UE5 功能名称
 
 以下是功能定位，具体算法和启用条件会在第 21～25 章核对展开。
